@@ -454,7 +454,7 @@ body.exporting .mnum-input{pointer-events:none;}
 </div><!-- /wrap -->
 
 <script>
-var PEOPLE=[{"id": "choi", "name": "최정윤", "role": "부원장", "badge": "부원장", "group": "부원장", "showMetrics": true}, {"id": "park", "name": "박진혁", "role": "부원장", "badge": "부원장", "group": "부원장", "showMetrics": true}, {"id": "koo", "name": "구혜림", "role": "연구원 (디자인)", "badge": "연구원", "group": "연구원", "showMetrics": false}, {"id": "kimjh", "name": "김진홍", "role": "주임교사", "badge": "주임교사", "group": "주임교사", "showMetrics": true}, {"id": "shin", "name": "신동주", "role": "주임교사", "badge": "주임교사", "group": "주임교사", "showMetrics": true}, {"id": "kimth", "name": "김태형", "role": "연구원", "badge": "연구원", "group": "연구원", "showMetrics": true}, {"id": "seol", "name": "설하빈", "role": "전임교사", "badge": "전임교사", "group": "전임교사", "showMetrics": true}, {"id": "kimhj", "name": "김희준", "role": "전임교사", "badge": "전임교사", "group": "전임교사", "showMetrics": true}, {"id": "yoo", "name": "유재은", "role": "데스크 실장", "badge": "실장", "group": "실장", "showMetrics": false}];
+var PEOPLE=[{"id":"choi","name":"최정윤","role":"부원장","badge":"부원장","group":"부원장","showMetrics":true},{"id":"park","name":"박진혁","role":"부원장","badge":"부원장","group":"부원장","showMetrics":true},{"id":"kimjh","name":"김진홍","role":"주임교사","badge":"주임교사","group":"주임교사","showMetrics":true},{"id":"shin","name":"신동주","role":"주임교사","badge":"주임교사","group":"주임교사","showMetrics":true},{"id":"koo","name":"구혜림","role":"연구원 (디자인)","badge":"연구원","group":"연구원","showMetrics":false},{"id":"kimth","name":"김태형","role":"연구원","badge":"연구원","group":"연구원","showMetrics":true},{"id":"seol","name":"설하빈","role":"전임교사","badge":"전임교사","group":"전임교사","showMetrics":true},{"id":"kimhj","name":"김희준","role":"전임교사","badge":"전임교사","group":"전임교사","showMetrics":true},{"id":"yoo","name":"유재은","role":"데스크 실장","badge":"실장","group":"실장","showMetrics":false}];
 var GROUP_ORDER=["부원장", "주임교사", "연구원", "전임교사", "실장"];
 
 /* ===== 2026 팀원 OKR 데이터 ===== */
@@ -536,6 +536,9 @@ function savePeople(){
       PEOPLE=sbPeople;
       try{localStorage.setItem(PEOPLE_KEY,JSON.stringify(PEOPLE));}catch(e){}
       renderHome();
+    } else {
+      /* Supabase에 people_data가 없으면 현재 PEOPLE로 저장 */
+      sbSavePeople();
     }
   });
 })();
@@ -663,11 +666,13 @@ function toggleOkr(){
 /* ===== Supabase 연동 ===== */
 var SB_URL_KEY='jarada_sb_url';
 var SB_KEY_KEY='jarada_sb_key';
+var SB_DEFAULT_URL='https://ljweqgkrkfpdqtpjuhub.supabase.co';
+var SB_DEFAULT_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxqd2VxZ2tya2ZwZHF0cGp1aHViIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4NzA0OTAsImV4cCI6MjA5NjQ0NjQ5MH0.hE8lTrmo_rpK6SMktIvIJs8Gkgb_9OvvzBgKIWHiK24';
 
 function getSbConfig(){
   try{
-    var url=localStorage.getItem(SB_URL_KEY)||'';
-    var key=localStorage.getItem(SB_KEY_KEY)||'';
+    var url=localStorage.getItem(SB_URL_KEY)||SB_DEFAULT_URL;
+    var key=localStorage.getItem(SB_KEY_KEY)||SB_DEFAULT_KEY;
     return url&&key?{url:url,key:key}:null;
   }catch(e){return null;}
 }
