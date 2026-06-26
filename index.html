@@ -1260,6 +1260,9 @@ function saveWeek(){
   if(!cur||mode!=='week')return;
   var arr=[];document.querySelectorAll('#weekList .wcard').forEach(function(c){arr.push(c._get());});
   try{localStorage.setItem(weekKey(),JSON.stringify(arr));}catch(e){}
+  var month=document.getElementById('monthNum').textContent.trim()||'6';
+  var week=document.getElementById('weekGlobal').value||'1주차';
+  sbSaveWeek(cur.id,month,week,arr);
 }
 function buildWeekly(){
   if(!cur)return;
@@ -1269,9 +1272,20 @@ function buildWeekly(){
   document.getElementById('wPreview').textContent='아래 버튼을 누르면 여기에 잔디 붙여넣기용 텍스트가 표시됩니다.';
   var host=document.getElementById('weekList');host.innerHTML='';
   var raw=null;try{raw=localStorage.getItem(weekKey());}catch(e){}
-  if(raw){try{var arr=JSON.parse(raw);if(arr&&arr.length){arr.forEach(addWeekRow);return;}}catch(e){}}
-  wItems().forEach(function(it){addWeekRow({item:it,status:'대기',thisW:'',nextW:''});});
-  if(!document.querySelectorAll('#weekList .wcard').length)addWeekRow();
+  function applyWeekData(arr){
+    host.innerHTML='';
+    if(arr&&arr.length){arr.forEach(addWeekRow);return;}
+    wItems().forEach(function(it){addWeekRow({item:it,status:'대기',thisW:'',nextW:''});});
+    if(!document.querySelectorAll('#weekList .wcard').length)addWeekRow();
+  }
+  applyWeekData(raw?JSON.parse(raw):null);
+  var fixedCur=cur;
+  sbLoadWeek(cur.id,month,week).then(function(sbData){
+    if(sbData&&cur===fixedCur){
+      try{localStorage.setItem(weekKey(),JSON.stringify(sbData));}catch(e){}
+      applyWeekData(sbData);
+    }
+  });
 }
 function syncFromMonth(){
   var existing={};document.querySelectorAll('#weekList .wcard').forEach(function(c){var d=c._get();existing[d.item]=d;});
