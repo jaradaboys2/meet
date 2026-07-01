@@ -268,7 +268,12 @@ body.exporting .mnum-input{pointer-events:none;}
     <p>이름을 선택해 본인 슬라이드를 작성하세요. 입력 내용은 자동으로 저장됩니다.</p>
     <div class="monthrow">
       <label>작성 월</label>
-      <input type="text" id="monthGlobal" value="6월" placeholder="예: 7월">
+      <select id="monthGlobal" style="font-family:inherit;font-size:14px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;border-radius:8px;padding:6px 12px;">
+        <option value="1월">1월</option><option value="2월">2월</option><option value="3월">3월</option>
+        <option value="4월">4월</option><option value="5월">5월</option><option value="6월">6월</option>
+        <option value="7월">7월</option><option value="8월">8월</option><option value="9월">9월</option>
+        <option value="10월">10월</option><option value="11월">11월</option><option value="12월">12월</option>
+      </select>
     </div>
   </div>
   <div id="groups"></div>
@@ -1043,7 +1048,16 @@ function goHome(){
 }
 
 /* 월 동기화 */
-document.getElementById('monthGlobal').addEventListener('input',function(){
+(function(){
+  var sel=document.getElementById('monthGlobal');
+  var saved=localStorage.getItem('jarada_month');
+  if(saved){sel.value=saved;}
+  else{var cm=new Date().getMonth()+1;sel.value=cm+'월';}
+  var d=sel.value.replace(/[^0-9]/g,'')||'6';
+  document.getElementById('monthNum').textContent=d;
+})();
+document.getElementById('monthGlobal').addEventListener('change',function(){
+  localStorage.setItem('jarada_month',this.value);
   var d=this.value.replace(/[^0-9]/g,'')||'6';
   document.getElementById('monthNum').textContent=d;
   updatePrevM();
